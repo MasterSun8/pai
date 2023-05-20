@@ -1,19 +1,24 @@
-const max = 100
-const min = 1
+class Matrix{
+    
+    max = 100
+    min = 1
 
-function matrix(row, col=null, a=198, b=99){
-    col = col == null   ? row : col
-    row = row >= min    ? row : null
-    col = col >= min    ? col : null
-    row = row <= max    ? row : null
-    col = col <= max    ? col : null
-
-    if(row == null || col == null){
-        console.log("Incorrect input")
-        return
+    constructor(row, col=null, a=198, b=99){
+        this.col = col == null   ? row : col
+        this.row = row >= min    ? row : null
+        this.col = this.col >= min    ? this.col : null
+        this.row = this.row <= max    ? this.row : null
+        this.col = this.col <= max    ? this.col : null
+    
+        if(this.row == null || this.col == null){
+            console.log("Incorrect input")
+            return
+        }
+        this.matrix = Array.from({length: this.row}, () => Array.from({length: this.col}, () => Math.floor(Math.random() * a - b)))
+        return this.matrix
     }
-    let matrix = Array.from({length: row}, () => Array.from({length: col}, () => Math.floor(Math.random() * a - b)))
-    return matrix
+
+
 }
 
 function determinant(matrix, sq=false, prec=false){
