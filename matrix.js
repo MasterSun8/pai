@@ -82,31 +82,98 @@ function determinant(matrix, sq=false, prec=false){
 }
 
 function multiplication(matrixA, matrixB){
-    let mA
-    let mB
+    let num = 0
+    let mat
     if(!Number.isInteger(matrixA)){
-        mA = isMatrix(matrixA)
+        isMatrix(matrixA)
+    }else{
+        num = 1
     }
     if(!Number.isInteger(matrixB)){
         mB = isMatrix(matrixB)
+    }else{
+        num = 2
     }
-    let rowA = matrixA.length()
-    let colA = matrixA[0].length()
-    let rowB = matrixB.length()
-    let colB = matrixB[0].length()
+
+    if(num == 1){
+        matrixB.forEach((el, index) => {
+            el.forEach((e, i) => {
+                matrixB[index][i] *= matrixA
+            }) 
+        })
+        return matrixB
+    }else if(num == 2){
+        matrixA.forEach((el, index) => {
+            el.forEach((e, i) => {
+                matrixA[index][i] *= matrixB
+            }) 
+        })
+        return matrixA
+    }
     
-    let matrix = matrix(colA)
+    let rowA = matrixA.length
+    let colA = matrixA[0].length
+    let rowB = matrixB.length
+    let colB = matrixB[0].length
+
+    if(colA != rowB){
+        throw new Error("The passed matrices can't be multiplied by each other")
+    }
+    
+    mat = matrix(rowA, colB, 0, 0)
+
+    let x, y, z
+
+    for(x = 0; x < rowA; x++){
+        for(y = 0; y < colB; y++){
+            for(z = 0; z < rowA; z++){
+                mat[x][y] += matrixA[x][z] * matrixB[z][y]
+            }
+        }
+    }
+
+    return mat
 }
 
+function addition(matrixA, matrixB){
+    isMatrix(matrixA)
+    isMatrix(matrixB)
+    
+    let rowA = matrixA.length
+    let colA = matrixA[0].length
+    let rowB = matrixB.length
+    let colB = matrixB[0].length
 
+    if(rowA != rowB || colA != colB){
+        throw new Error("You can't add matrices of different dimensions")
+    }
 
+    matrixA.forEach((e, i) => {
+        e.forEach((el, index) => {
+            matrixB[i][index] += el
+        })
+    })
+    return matrixB
+}
 
+function transpose(matr){
+    isMatrix(matr)
+    
+    console.table(matr)
+    
+    let row = matr.length
+    let col = matr[0].length
 
+    let mat = matrix(col, row)
 
+    matr.forEach((el, index) => {
+        el.forEach((e, i) => {
+            mat[i][index] = e
+        }) 
+    })
 
-
-
-
+    return mat
+}
 
 function drawMatrix(matrix){
     if(isMatrix(matrix)){
