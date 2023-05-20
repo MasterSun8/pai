@@ -1,24 +1,93 @@
 class Matrix{
-    
-    max = 100
-    min = 1
-
     constructor(row, col=null, a=198, b=99){
+        this.max = 100
+        this.min = 1
+
         this.col = col == null   ? row : col
-        this.row = row >= min    ? row : null
-        this.col = this.col >= min    ? this.col : null
-        this.row = this.row <= max    ? this.row : null
-        this.col = this.col <= max    ? this.col : null
+        this.row = row >= this.min    ? row : null
+        this.col = this.col >= this.min    ? this.col : null
+        this.row = this.row <= this.max    ? this.row : null
+        this.col = this.col <= this.max    ? this.col : null
+        this.sq = this.row==this.col
     
         if(this.row == null || this.col == null){
             console.log("Incorrect input")
             return
         }
-        this.matrix = Array.from({length: this.row}, () => Array.from({length: this.col}, () => Math.floor(Math.random() * a - b)))
-        return this.matrix
+        this.mat = Array.from({length: this.row}, () => 
+            Array.from({length: this.col}, () => 
+                Math.floor(Math.random() * a - b)
+            )
+        )
+        this.det = this.determinant()
     }
 
+    determinant(prec=false, mat=null){
+        mat = mat == null ? this.mat : mat
+        console.log(mat)
+        let row = mat.length
+        let col = mat[0].length
+        let sq = row==col
+        if(sq){
+            if(row<3){
+                return mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0]
+            }
+            if(!prec){
+                let det = 1
+                for(let i = 0; i < row; i++){
+                    let pivot = mat[i][i]
+                    if(pivot == 0){
+                        let found = false
+                        for(let j = i+1; j < row; j++){
+                            if(mat[j][i] != 0){
+                                found = true
+                                let temp = mat[i]
+                                mat[i] = mat[j]
+                                mat[j] = temp
+                                pivot = mat[i][i]
+                                det *= -1
+                                break
+                            }
+                        }
+                        if(!found){
+                            return 0
+                        }
+                    }
+                    for(let j = i+1; j < row; j++){
+                        let factor = mat[j][i] / pivot
+                        for(let k = i+1; k < col; k++){
+                            mat[j][k] -= factor * mat[i][k]
+                        }
+                    }
+                    det *= pivot
+                }
+                console.log(mat)
 
+                return det
+            }else{
+                let result = 0
+                for(let i = 0; i<col; i++){
+                    let sign = (i % 2 == 0) ? 1 : -1
+                    let temp = new Array()
+                    for(let j = 1; j < row; j++){
+                        let t = new Array()
+                        for(let k = 0; k < col; k++){
+                            if(k == i){
+                                continue
+                            }
+                            t.push(mat[j][k])
+                        }
+                    temp.push(t)
+                    }
+                    result += sign * mat[0][i] * this.determinant(true, temp)
+                }
+                return result
+            }
+        }else{
+            console.log("The matrix isnt square")
+            return false
+        }
+    }
 }
 
 function determinant(matrix, sq=false, prec=false){
@@ -76,7 +145,7 @@ function determinant(matrix, sq=false, prec=false){
                     }
                     temp.push(t)
                 }
-                result += sign * matrix[0][i] * determinant(temp, true, true)
+                result += sign * matrix[0][i] * this.determinant(temp, true, true)
             }
             return result    
         }
@@ -86,7 +155,7 @@ function determinant(matrix, sq=false, prec=false){
     }
 }
 
-function multiplication(matrixA, matrixB){
+function multiplication(matrixA, matrixB){  //multiplication([[1, 2], [3, 4]], [[5, 6], [7, 8]]) expected: [[19, 22], [43, 50]]
     let num = 0
     let mat
     if(!Number.isInteger(matrixA)){

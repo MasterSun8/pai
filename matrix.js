@@ -23,6 +23,9 @@ function determinant(matrix, sq=false, prec=false){
     let col = matrix[0].length
     sq = sq ? sq : row==col
     if(sq){
+        if(row<3){
+            return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
+        }
         if(!prec){
             let det = 1
             for(let i = 0; i < row; i++){
