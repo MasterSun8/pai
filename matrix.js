@@ -1,5 +1,6 @@
 const max = 100
 const min = 1
+var rec = 0
 
 function matrix(row, col=null, a=198, b=99){
     col = col == null   ? row : col
@@ -16,73 +17,110 @@ function matrix(row, col=null, a=198, b=99){
     return matrix
 }
 
-function determinant(matrix, sq=false, prec=false){
-    console.log(matrix)
+function determinant(matrix, prec=false, sq=false){
+    if(!sq){
+        rec = 0
+    }
     isMatrix(matrix)
     let row = matrix.length
     let col = matrix[0].length
     sq = sq ? sq : row==col
     if(sq){
-        if(row<3){
-            return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
+        if(row<2){
+            return matrix[0][0]
         }
         if(!prec){
-            let det = 1
-            for(let i = 0; i < row; i++){
-                let pivot = matrix[i][i]
-                if(pivot == 0){
-                    let found = false
-                    for(let j = i+1; j < row; j++){
-                        if(matrix[j][i] != 0){
-                            found = true
-                            let temp = matrix[i]
-                            matrix[i] = matrix[j]
-                            matrix[j] = temp
-                            pivot = matrix[i][i]
-                            det *= -1
-                            break
-                        }
-                    }
-                    if(!found){
-                        return 0
-                    }
-                }
-                for(let j = i+1; j < row; j++){
-                    let factor = matrix[j][i] / pivot
-                    for(let k = i+1; k < col; k++){
-                        matrix[j][k] -= factor * matrix[i][k]
-                    }
-                }
-                det *= pivot
-            }
-            console.log(matrix)
-    
-            return det
+            return triangularDet(matrix, row, col)
         }else{
-            let result = 0
-
-            for(let i = 0; i<col; i++){
-                let sign = (i % 2 == 0) ? 1 : -1
-                let temp = new Array
-                for(let j = 1; j < row; j++){
-                    let t = new Array
-                        for(let k = 0; k < col; k++){
-                            if(k == i){
-                                continue
-                            }
-                            t.push(matrix[j][k])
-                    }
-                    temp.push(t)
-                }
-                result += sign * matrix[0][i] * determinant(temp, true, true)
-            }
-            return result    
+            return laplace(matrix, row, col)
         }
     }else{
         console.log("The matrix isnt square")
         return false
     }
 }
+
+function triangularDet(matrix, row, col){
+    let det = 1
+    for(let i = 0; i < row; i++){
+        let pivot = matrix[i][i]
+        if(pivot == 0){
+            let found = false
+            for(let j = i+1; j < row; j++){
+                if(matrix[j][i] != 0){
+                    found = true
+                    let temp = matrix[i]
+                    matrix[i] = matrix[j]
+                    matrix[j] = temp
+                    pivot = matrix[i][i]
+                    det *= -1
+                    break
+                }
+            }
+            if(!found){
+                return 0
+            }
+        }
+        for(let j = i+1; j < row; j++){
+            let factor = matrix[j][i] / pivot
+            for(let k = i+1; k < col; k++){
+                matrix[j][k] -= factor * matrix[i][k]
+            }
+        }
+        det *= pivot
+    }
+    return Math.round(det)
+}
+
+function laplace(matrix, row, col){
+    let result = 0
+
+    for(let i = 0; i < col; i++){
+        let sign = (i % 2 == 0) ? 1 : -1
+        let temp = new Array
+        for(let j = 1; j < row; j++){
+            let t = new Array
+                for(let k = 0; k < col; k++){
+                    if(k == i){
+                        continue
+                    }
+                    t.push(matrix[j][k])
+            }
+            temp.push(t)
+        }
+        result += sign * matrix[0][i] * laplace(temp, row-1, col-1)
+    }
+    return result
+}
+
+/*    let f = 0
+    for(let i = row-1; i > 0; i--){
+        matrix[i-1] = det(matrix, i, col-1)
+    }
+    matrix[0].forEach((element, index) => {
+        let sign = index % 2 ? -1 : 1
+        f += element*sign
+    })
+    return f
+}
+function det(matrix, row, col){
+    let arr = new Array
+    let temp = 0
+    for(let i = 1; i<=col; i++){
+        temp = matrix[row-1][i-1]*matrix[row][i]
+        if(row!=1){
+            temp -= matrix[row][i-1]*matrix[row-1][i]
+        }
+        arr.push(temp)
+    }
+    temp = matrix[row-1][0]*matrix[row][col]-matrix[row][0]*matrix[row-1][col]
+    if(row==1){
+        temp = matrix[row-1][col]*matrix[row][0]
+    }
+    arr.push(temp)
+    return arr
+}
+*/
 
 function multiplication(matrixA, matrixB){
     let num = 0
@@ -206,3 +244,29 @@ function isMatrix(matrix){
     }
     return true
 }
+
+/*
+            if(!(rec%1000000)){
+                console.clear()
+                console.log(`Calculating${".".repeat(Math.round(rec/1000000))}`)
+            }
+            rec++
+            let result = 0
+
+            for(let i = 0; i < col; i++){
+                let sign = (i % 2 == 0) ? 1 : -1
+                let temp = new Array
+                for(let j = 1; j < row; j++){
+                    let t = new Array
+                        for(let k = 0; k < col; k++){
+                            if(k == i){
+                                continue
+                            }
+                            t.push(matrix[j][k])
+                    }
+                    temp.push(t)
+                }
+                result += sign * matrix[0][i] * determinant(temp, true, true)
+            }
+            return result
+            */
