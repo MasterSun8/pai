@@ -26,9 +26,6 @@ function determinant(matrix, prec=false, sq=false){
     let col = matrix[0].length
     sq = sq ? sq : row==col
     if(sq){
-        if(row<2){
-            return matrix[0][0]
-        }
         if(!prec){
             return triangularDet(matrix, row, col)
         }else{
@@ -73,6 +70,9 @@ function triangularDet(matrix, row, col){
 }
 
 function laplace(matrix, row, col){
+    if(row<=1){
+        return matrix[0][0]
+    }
     let result = 0
 
     for(let i = 0; i < col; i++){
@@ -92,35 +92,6 @@ function laplace(matrix, row, col){
     }
     return result
 }
-
-/*    let f = 0
-    for(let i = row-1; i > 0; i--){
-        matrix[i-1] = det(matrix, i, col-1)
-    }
-    matrix[0].forEach((element, index) => {
-        let sign = index % 2 ? -1 : 1
-        f += element*sign
-    })
-    return f
-}
-function det(matrix, row, col){
-    let arr = new Array
-    let temp = 0
-    for(let i = 1; i<=col; i++){
-        temp = matrix[row-1][i-1]*matrix[row][i]
-        if(row!=1){
-            temp -= matrix[row][i-1]*matrix[row-1][i]
-        }
-        arr.push(temp)
-    }
-    temp = matrix[row-1][0]*matrix[row][col]-matrix[row][0]*matrix[row-1][col]
-    if(row==1){
-        temp = matrix[row-1][col]*matrix[row][0]
-    }
-    arr.push(temp)
-    return arr
-}
-*/
 
 function multiplication(matrixA, matrixB){
     let num = 0
@@ -244,29 +215,3 @@ function isMatrix(matrix){
     }
     return true
 }
-
-/*
-            if(!(rec%1000000)){
-                console.clear()
-                console.log(`Calculating${".".repeat(Math.round(rec/1000000))}`)
-            }
-            rec++
-            let result = 0
-
-            for(let i = 0; i < col; i++){
-                let sign = (i % 2 == 0) ? 1 : -1
-                let temp = new Array
-                for(let j = 1; j < row; j++){
-                    let t = new Array
-                        for(let k = 0; k < col; k++){
-                            if(k == i){
-                                continue
-                            }
-                            t.push(matrix[j][k])
-                    }
-                    temp.push(t)
-                }
-                result += sign * matrix[0][i] * determinant(temp, true, true)
-            }
-            return result
-            */
